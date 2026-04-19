@@ -1,0 +1,274 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #fdfaf7;
+  --surface: #ffffff;
+  --row-alt: #f7f0e8;
+  --text: #4a3728;
+  --text-muted: #6b5a4d;
+  --primary: #a67c52;
+  --primary-hover: #8e6844;
+  --success: #527a52;
+  --failure: #a65252;
+  --warning: #c29d4c;
+  --border: #e8dfd5;
+  --shadow: rgba(74, 55, 40, 0.05);
+  --font-main: 'Quicksand', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+[data-theme='dark'] {
+  --bg: #1a120b;
+  --surface: #2d2013;
+  --row-alt: #241a10;
+  --text: #fdfaf7;
+  --text-muted: #d9c5b2;
+  --primary: #a67c52;
+  --primary-hover: #c29d4c;
+  --success: #7a9a7a;
+  --failure: #c57a7a;
+  --warning: #d9c5b2;
+  --border: #3e2c1c;
+  --shadow: rgba(0, 0, 0, 0.3);
+}
+
+body, html {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: var(--font-main) !important;
+  line-height: 1.6;
+  margin: 0;
+  padding: 2rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+h1, h2, h3, p, span, div, td, th, a {
+  font-family: var(--font-main) !important;
+}
+
+h1, h2, h3 {
+  color: var(--primary) !important;
+  margin-top: 0;
+}
+
+a, a:link, a:visited {
+  color: var(--primary) !important;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--primary-hover) !important;
+  text-decoration: underline;
+}
+
+/* Header & Navigation */
+div.header {
+  background: var(--surface) !important;
+  padding: 1.5rem !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px var(--shadow);
+  margin-bottom: 2rem !important;
+  text-align: center;
+  border: 1px solid var(--border) !important;
+}
+
+div.header p {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  color: var(--primary) !important;
+}
+
+div.breadcrumb {
+  margin-bottom: 1rem !important;
+  font-size: 0.9rem !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+}
+
+div.breadcrumb p {
+  font-variant: normal !important;
+  text-transform: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+div.breadcrumb a, div.breadcrumb a:link, div.breadcrumb a:visited {
+  color: var(--text-muted) !important;
+}
+
+div.logout {
+  float: right;
+  margin-top: -3.5rem !important;
+  margin-right: 1rem !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+div.logout a, div.logout a:link, div.logout a:visited {
+  background: var(--primary) !important;
+  color: var(--bg) !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  display: inline-block;
+}
+
+/* Tables */
+table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  background: var(--surface) !important;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px var(--shadow);
+  margin: 2rem 0 !important;
+  border: 1px solid var(--border) !important;
+}
+
+th, td {
+  padding: 1.25rem 1rem !important;
+  text-align: left !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  background-color: transparent !important;
+  color: var(--text) !important;
+  transition: background-color 0.2s;
+}
+
+th {
+  background: var(--border) !important;
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+
+tr:last-child td {
+  border-bottom: none !important;
+}
+
+tr:hover td {
+  background-color: rgba(166, 124, 82, 0.08) !important;
+}
+
+tr.r0 { background-color: var(--surface) !important; }
+tr.r1 { background-color: var(--row-alt) !important; }
+tr.highlight { background-color: var(--warning) !important; color: white !important; }
+
+/* Status Colors */
+td.passed { background-color: var(--success) !important; color: white; }
+td.failed { background-color: var(--failure) !important; color: white; }
+td.error { background-color: var(--failure) !important; color: white; }
+td.warning { background-color: var(--warning) !important; color: white; }
+td.huh { background-color: var(--warning) !important; color: white; }
+td.timeout { background-color: var(--failure) !important; color: white; }
+td.not_implemented { background-color: var(--border) !important; }
+td.could_not_run { background-color: var(--text-muted) !important; color: white; }
+
+/* Code Tables */
+table.codetable {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.9rem;
+  box-shadow: none;
+  border: none;
+}
+
+table.codetable td {
+  padding: 0.2rem 0.5rem;
+  border: none;
+}
+
+.codekeyword { color: var(--primary); font-weight: bold; }
+.codestring { color: var(--success); }
+.codecomment { color: var(--text-muted); font-style: italic; }
+
+/* Theme Toggle Button */
+#marmoglow-toggle {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: var(--primary);
+  color: var(--bg);
+  border: none;
+  padding: 0.75rem;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+}
+
+#marmoglow-toggle:hover {
+  transform: scale(1.1);
+  background: var(--primary-hover);
+}
+
+#marmoglow-toggle svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+/* Forms */
+table.form {
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+table.form td.label {
+  font-weight: 600;
+  text-align: right;
+  background: var(--bg);
+  width: 30%;
+}
+
+table.form input[type="text"],
+table.form input[type="password"],
+table.form select,
+table.form textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+table.form tr.submit td {
+  background: var(--surface);
+  text-align: center;
+  padding: 1.5rem;
+}
+
+input[type="submit"], 
+button.submit {
+  background: var(--primary);
+  color: var(--bg);
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+input[type="submit"]:hover,
+button.submit:hover {
+  background: var(--primary-hover);
+}
+
+/* Footer */
+div.footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
