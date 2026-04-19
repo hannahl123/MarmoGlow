@@ -17,18 +17,27 @@
 }
 
 [data-theme='dark'] {
-  --bg: #1a120b;
-  --surface: #2d2013;
-  --row-alt: #241a10;
-  --text: #fdfaf7;
-  --text-muted: #d9c5b2;
-  --primary: #a67c52;
-  --primary-hover: #c29d4c;
-  --success: #7a9a7a;
-  --failure: #c57a7a;
-  --warning: #d9c5b2;
-  --border: #3e2c1c;
-  --shadow: rgba(0, 0, 0, 0.3);
+  /* Base */
+  --bg: #1a1410;        /* very dark brown (espresso) */
+  --surface: #241c16;   /* lifted surface */
+  --row-alt: #2c231c;   /* subtle separation */
+
+  /* Text */
+  --text: #f3e9e1;      
+  --text-muted: #b8a79a;
+
+  /* Brand */
+  --primary: #c8a27a;   
+  --primary-hover: #ddb892;
+
+  /* Semantic */
+  --success: #7fa87f;   
+  --failure: #d17a7a;   
+  --warning: #e0c27a;
+
+  /* UI */
+  --border: #3a2f26;
+  --shadow: rgba(0, 0, 0, 0.5);
 }
 
 body, html {
@@ -261,6 +270,39 @@ button.submit {
 input[type="submit"]:hover,
 button.submit:hover {
   background: var(--primary-hover);
+}
+
+/* Score Badges */
+.marmoglow-score {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  background: var(--border);
+  color: var(--text);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.marmoglow-score.passed {
+  background: #d4e9d4 !important;
+  color: #2d4a2d !important;
+}
+
+.marmoglow-score.failed {
+  background: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+.marmoglow-score.error {
+  background: #343a40 !important;
+  color: #f8f9fa !important;
+}
+
+.marmoglow-score.testing {
+  background: var(--primary) !important;
+  color: white !important;
 }
 
 /* Footer */
