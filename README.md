@@ -1,6 +1,6 @@
 # MarmoGlow
 
-A UI extension to transform the Marmoset submission server into a clean, modern, and actually-usable interface.
+A UI extension to transform University of Waterloo's Marmoset submission server into a clean, modern, and actually-usable interface.
 
 ## Features
 - **Coffee & Cream Theme**: A warm, minimalistic aesthetic for a comfortable coding environment.
