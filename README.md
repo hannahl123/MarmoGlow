@@ -3,16 +3,18 @@
 A UI extension to transform the Marmoset submission server into a clean, modern, and actually-usable interface.
 
 ## Features
-- **Coffee & Cream Theme**: A warm, minimalistic aesthetic for better readability.
-- **Dark Mode**: Toggle between Light (Cream) and Dark (Mocha) modes.
-- **Improved Tables**: Better spacing, hover effects, and clear status indicators.
-- **Modern Typography**: Uses clean, sans-serif fonts for a better reading experience.
+- **Coffee & Cream Theme**: A warm, minimalistic aesthetic for a comfortable coding environment.
+- **Espresso Dark Mode**: A deep, rich dark theme with off-white text for late-night sessions.
+- **Background Score Fetching**: Automatically fetches and displays your most recent submission score next to the "view" link, so you don't have to click through.
+- **Color-Coded Badges**: Instant visual feedback with pastel green (passed), soft red (failed), and dark grey (error) badges.
+- **Modern Typography**: Uses the **Quicksand** rounded font for a clean, friendly feel.
+- **Minimalist Toggle**: A sleek theme switcher conveniently located in the top-left corner.
 
-## Installation (for now)
+## Installation
 1. Download or clone this repository.
 2. Open Chrome and navigate to `chrome://extensions`.
 3. Enable "Developer mode" in the top right.
 4. Click "Load unpacked" and select the MarmoGlow folder.
 
 ## Usage
-Click the floating theme toggle button in the bottom right corner of any Marmoset page to switch between light and dark themes. Your preference will be saved automatically.
+Click the floating theme toggle button in the **top-left corner** of any Marmoset page to switch between Light (Cream) and Dark (Espresso) modes. Your preference is saved automatically via Chrome storage.
