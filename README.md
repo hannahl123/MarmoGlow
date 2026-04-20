@@ -11,10 +11,18 @@ A UI extension to transform University of Waterloo's Marmoset submission server 
 - **Minimalist Toggle**: A sleek theme switcher conveniently located in the top-left corner.
 
 ## Installation
+
+### Locally
 1. Download or clone this repository.
 2. Open Chrome and navigate to `chrome://extensions`.
 3. Enable "Developer mode" in the top right.
 4. Click "Load unpacked" and select the MarmoGlow folder.
+
+Or more easily for Chrome users...
+
+### Google Chrome extension
+
+Add [this](https://chromewebstore.google.com/detail/marmoglow/pfaememcagmpejbognigeldgamlggcoi) to your browser! 
 
 ## Usage
 Click the floating theme toggle button in the **top-left corner** of any Marmoset page to switch between Light (Cream) and Dark (Espresso) modes. Your preference is saved automatically via Chrome storage.
