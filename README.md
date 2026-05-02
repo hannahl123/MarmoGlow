@@ -12,17 +12,23 @@ A UI extension to transform University of Waterloo's Marmoset submission server 
 
 ## Installation
 
-### Locally
+### Locally (Google Chrome)
 1. Download or clone this repository.
 2. Open Chrome and navigate to `chrome://extensions`.
 3. Enable "Developer mode" in the top right.
 4. Click "Load unpacked" and select the MarmoGlow folder.
 
-Or more easily for Chrome users...
+Or more easily...
 
-### Google Chrome extension
+### Google Chrome Extension
 
-Add [this](https://chromewebstore.google.com/detail/marmoglow/pfaememcagmpejbognigeldgamlggcoi) to your browser! 
+Add [this](https://chromewebstore.google.com/detail/marmoglow/pfaememcagmpejbognigeldgamlggcoi) to your browser!
+
+### FireFox Extension
+
+> Note: FireFox addons need to be signed to install outside of a temporary development session.
+
+Install the signed FireFox addon [here](https://addons.mozilla.org/en-CA/firefox/addon/marmoglow/)!
 
 ## Usage
 Click the floating theme toggle button in the **top-left corner** of any Marmoset page to switch between Light (Cream) and Dark (Espresso) modes. Your preference is saved automatically via Chrome storage.
