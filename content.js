@@ -2,6 +2,13 @@
   // Theme Toggle Implementation
   const storageKey = "marmoglow-theme";
 
+  // Polling state for submission scores
+  const PENDING_POLL_INTERVAL_MS = 10000; // check every 10s while pending
+  const PENDING_POLL_MAX_ATTEMPTS = 18;   // give up after ~3 minutes
+  const FULL_REFRESH_INTERVAL_MS = 15000; // re-fetch page every 15s
+  let fullRefreshTimer = null;
+  let pollAttempt = 0;
+
   function setTheme(theme) {
     console.log("[MarmoGlow] Setting theme to:", theme);
     document.documentElement.setAttribute("data-theme", theme);
@@ -27,20 +34,137 @@
     setTheme(newTheme);
   }
 
-  // Fetch and display scores
-  async function fetchScores() {
+  /** Create a score badge element. */
+  function createBadge(scoreText) {
+    const badge = document.createElement("span");
+    badge.className = "marmoglow-score";
+    badge.textContent = scoreText;
+
+    const lowerScore = scoreText.toLowerCase();
+
+    if (scoreText.includes("/")) {
+      const parts = scoreText.split("/");
+      const got = parseInt(parts[0].trim());
+      const total = parseInt(parts[1].trim());
+      if (got === total && total > 0) {
+        badge.classList.add("passed");
+      } else if (got < total || got === 0) {
+        badge.classList.add("failed");
+      }
+    } else if (lowerScore.includes("error") || lowerScore.includes("not compile")) {
+      badge.classList.add("error");
+    } else if (lowerScore.includes("fail")) {
+      badge.classList.add("failed");
+    } else if (lowerScore.includes("pass")) {
+      badge.classList.add("passed");
+    } else if (scoreText === "Testing...") {
+      badge.classList.add("testing");
+    }
+
+    return badge;
+  }
+
+  /**
+   * Refresh scores by re-fetching the current page and comparing.
+   * If any row's score changed, reload the page so Marmoset re-renders natively.
+   */
+  async function refreshScores() {
+    pollAttempt++;
+
+    try {
+      // Re-fetch the current page
+      const sep = window.location.href.includes("?") ? "&" : "?";
+      const pageUrl = window.location.href + sep + "t=" + Date.now();
+      const response = await fetch(pageUrl, {
+        cache: "no-store",
+        credentials: "include",
+      });
+      if (!response.ok) return;
+
+      const html = await response.text();
+      const parser = new DOMParser();
+      const fetchedDoc = parser.parseFromString(html, "text/html");
+
+      // Extract scores from fetched page
+      const fetchedRows = fetchedDoc.querySelectorAll("tr.r0, tr.r1");
+      const fetchedScores = [];
+      let hasPending = false;
+
+      for (const row of fetchedRows) {
+        const cells = Array.from(row.querySelectorAll("td"));
+        let scoreText = (cells[2]?.textContent ?? "").replace(/\s+/g, " ").trim();
+        if (!scoreText) scoreText = "No Score";
+        fetchedScores.push(scoreText);
+        if (scoreText.toLowerCase().includes("not tested yet")) hasPending = true;
+      }
+
+      // Extract current DOM scores for comparison
+      const domRows = document.querySelectorAll("tr.r0, tr.r1");
+      const oldScores = [];
+      for (const row of domRows) {
+        const cells = Array.from(row.querySelectorAll("td"));
+        // Get raw text, excluding our injected badges
+        const badge = cells[2]?.querySelector(".marmoglow-score");
+        const rawText = badge
+          ? badge.textContent
+          : (cells[2]?.textContent ?? "").replace(/\s+/g, " ").trim();
+        oldScores.push(rawText || "No Score");
+      }
+
+      // Compare: did anything change (row count or any score value)?
+      let changed = fetchedScores.length !== oldScores.length;
+      if (!changed) {
+        for (let i = 0; i < fetchedScores.length; i++) {
+          if (fetchedScores[i] !== oldScores[i]) {
+            changed = true;
+            console.log(
+              `[MarmoGlow] Change detected: row ${i + 1}: "${oldScores[i]}" -> "${fetchedScores[i]}"`
+            );
+            break;
+          }
+        }
+      }
+
+      if (changed) {
+        console.log("[MarmoGlow] Reloading page to show updated results...");
+        window.location.reload();
+        return;
+      }
+
+      // If nothing changed and nothing is pending, stop polling
+      if (!hasPending && pollAttempt > 3) {
+        console.log("[MarmoGlow] All scores settled. Stopping refresh loop.");
+        clearInterval(fullRefreshTimer);
+        fullRefreshTimer = null;
+        return;
+      }
+
+      console.log(`[MarmoGlow] No changes (attempt ${pollAttempt})${hasPending ? ", still pending..." : ""}`);
+    } catch (e) {
+      console.error("[MarmoGlow] Refresh failed:", e);
+    }
+  }
+
+  /** Start the periodic refresh timer. */
+  function startRefreshLoop() {
+    fullRefreshTimer = setInterval(refreshScores, FULL_REFRESH_INTERVAL_MS);
+  }
+
+  /** Initial run: fetch individual submission pages to show badges. */
+  async function showInitialScores() {
     const allLinks = Array.from(document.querySelectorAll("a"));
-    const viewLinks = allLinks.filter(
-      (a) => a.textContent.trim().toLowerCase() === "view",
+    const viewLinks = allLinks.filter((a) =>
+      a.href.includes("submission.jsp") &&
+      a.textContent.trim().toLowerCase() === "view"
     );
 
-    console.log(`[MarmoGlow] Found ${viewLinks.length} view links to check.`);
+    console.log(`[MarmoGlow] Fetching scores for ${viewLinks.length} submissions...`);
 
-    viewLinks.forEach(async (link) => {
+    for (const link of viewLinks) {
       try {
-        const fetchUrl =
-          link.href + (link.href.includes("?") ? "&" : "?") + "t=" + Date.now();
-        const response = await fetch(fetchUrl);
+        const fetchUrl = link.href + (link.href.includes("?") ? "&" : "?") + "t=" + Date.now();
+        const response = await fetch(fetchUrl, { cache: "no-store" });
+        if (!response.ok) continue;
         const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
@@ -48,50 +172,23 @@
         const firstRow = doc.querySelector("tr.r0, tr.r1");
         if (firstRow) {
           const cells = Array.from(firstRow.querySelectorAll("td"));
-          let scoreText = cells[2] ? cells[2].textContent.trim() : null;
+          let scoreText = (cells[2]?.textContent ?? "").replace(/\s+/g, " ").trim();
 
-          if (!scoreText || scoreText === "") {
-            const testingMatch = doc.body.textContent
-              .toLowerCase()
-              .includes("testing");
-            scoreText = testingMatch ? "Testing..." : "No Score";
+          if (!scoreText) {
+            const bodyLower = doc.body?.textContent?.toLowerCase() ?? "";
+            scoreText = bodyLower.includes("not tested yet")
+              ? "Testing..."
+              : "No Score";
           }
 
-          if (scoreText) {
-            console.log(`[MarmoGlow] Score for ${link.href}: ${scoreText}`);
-            const scoreBadge = document.createElement("span");
-            scoreBadge.className = "marmoglow-score";
-            scoreBadge.textContent = scoreText;
-
-            const lowerScore = scoreText.toLowerCase();
-
-            if (scoreText.includes("/")) {
-              const parts = scoreText.split("/");
-              const got = parseInt(parts[0].trim());
-              const total = parseInt(parts[1].trim());
-              if (got === total && total > 0) {
-                scoreBadge.classList.add("passed");
-              } else if (got < total || got === 0) {
-                scoreBadge.classList.add("failed");
-              }
-            } else if (lowerScore.includes("error")) {
-              scoreBadge.classList.add("error");
-            } else if (lowerScore.includes("fail")) {
-              scoreBadge.classList.add("failed");
-            } else if (lowerScore.includes("pass")) {
-              scoreBadge.classList.add("passed");
-            } else if (scoreText === "Testing...") {
-              scoreBadge.classList.add("testing");
-            }
-
-            link.innerHTML = "view ";
-            link.appendChild(scoreBadge);
-          }
+          const badge = createBadge(scoreText);
+          link.appendChild(badge);
+          console.log(`[MarmoGlow] ${link.href}: ${scoreText}`);
         }
       } catch (e) {
-        console.error("[MarmoGlow] Failed to fetch score for:", link.href, e);
+        console.error("[MarmoGlow] Failed to fetch:", link.href, e);
       }
-    });
+    }
   }
 
   function init() {
@@ -122,8 +219,14 @@
     toggleBtn.addEventListener("click", toggleTheme);
     document.body.appendChild(toggleBtn);
 
-    // Load scores
-    fetchScores();
+    // Load scores initially, then start polling for changes
+    showInitialScores();
+    startRefreshLoop();
+
+    // Clean up on page unload
+    window.addEventListener("pagehide", () => {
+      if (fullRefreshTimer) clearInterval(fullRefreshTimer);
+    }, { once: true });
   }
 
   // Wait for body to be available
